@@ -1,0 +1,25 @@
+{
+  "results": [
+    {
+      "id": 659015,
+      "title": "Salad With Apples, Gorgonzola and Walnuts",
+      "image": "https://spoonacular.com/recipeImages/659015-312x231.jpg",
+      "imageType": "jpg"
+    },
+    {
+      "id": 1096010,
+      "title": "Egg Salad Wrap",
+      "image": "https://spoonacular.com/recipeImages/1096010-312x231.jpg",
+      "imageType": "jpg"
+    },
+    {
+      "id": 642240,
+      "title": "Egg Salad Sandwiches With Tarragon",
+      "image": "https://spoonacular.com/recipeImages/642240-312x231.jpg",
+      "imageType": "jpg"
+    }
+  ],
+  "offset": 0,
+  "number": 3,
+  "totalResults": 362
+}
