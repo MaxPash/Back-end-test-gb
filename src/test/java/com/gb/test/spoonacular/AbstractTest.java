@@ -1,19 +1,20 @@
-package com.gb.test;
+package com.gb.test.spoonacular;
 
 import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.builder.ResponseSpecBuilder;
+import io.restassured.filter.log.LogDetail;
+import io.restassured.http.ContentType;
+import io.restassured.specification.RequestSpecification;
+import io.restassured.specification.ResponseSpecification;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 public class AbstractTest {
-
-    protected static String API_KEY = "603cef618e52469c8d3591641acd27c6";
-
-    @BeforeAll
-    static void beforeAll() {
-        RestAssured.baseURI = "https://api.spoonacular.com";
-    }
 
     protected String getResourceAsString(String resource) throws IOException {
         InputStream inputStream = getClass().getResourceAsStream(resource);

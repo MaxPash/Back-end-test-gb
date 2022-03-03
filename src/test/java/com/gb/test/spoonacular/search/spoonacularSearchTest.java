@@ -1,7 +1,13 @@
-package com.gb.test.spoonacularSearch;
+package com.gb.test.spoonacular.search;
 
-import com.gb.test.AbstractTest;
+import com.gb.test.spoonacular.AbstractTest;
 import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.builder.ResponseSpecBuilder;
+import io.restassured.filter.log.LogDetail;
+import io.restassured.http.ContentType;
+import io.restassured.specification.RequestSpecification;
+import io.restassured.specification.ResponseSpecification;
 import org.hamcrest.Matchers;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,18 +23,36 @@ import static org.hamcrest.Matchers.is;
 
 public class spoonacularSearchTest extends AbstractTest {
 
+    private static String API_KEY = "603cef618e52469c8d3591641acd27c6";
+    private static RequestSpecification BASE_SPEC;
+    private static ResponseSpecification RESPONSE_SPEC;
+
+
+    @BeforeAll
+    static void beforeAll() {
+        RestAssured.baseURI = "https://api.spoonacular.com";
+
+        BASE_SPEC = new RequestSpecBuilder()
+                .addParam("apiKey", API_KEY)
+                .log(LogDetail.ALL)
+                .build();
+
+        RESPONSE_SPEC = new ResponseSpecBuilder()
+                .expectStatusCode(200)
+                .expectContentType(ContentType.JSON)
+                .expectResponseTime(Matchers.lessThan(2000L))
+                .build();
+    }
+
     @Test
     @DisplayName("Empty request test")
     protected void testGetRecipesComplexSearchEmpty() throws IOException, JSONException {
 
         String actual = given()
-                .param("apiKey", API_KEY)
-                .log()
-                .parameters()
+                .spec(BASE_SPEC)
                 .expect()
-                .statusCode(200)
-                .time(Matchers.lessThan(2000L))
                 .body("totalResults", is(5226))
+                .spec(RESPONSE_SPEC)
                 .log()
                 .body()
                 .when()
@@ -51,17 +75,14 @@ public class spoonacularSearchTest extends AbstractTest {
     protected void testGetRecipesComplexSearchVegPasta() throws IOException, JSONException {
 
         String actual = given()
-                .param("apiKey", API_KEY)
+                .spec(BASE_SPEC)
                 .param("query", "pasta")
                 .param("diet", "vegetarian")
-                .log()
-                .parameters()
                 .expect()
-                .statusCode(200)
-                .time(Matchers.lessThan(2000L))
-                .body("totalResults", is(34))
+                .spec(RESPONSE_SPEC)
                 .log()
                 .body()
+                .body("totalResults", is(34))
                 .when()
                 .get("recipes/complexSearch")
                 .body()
@@ -82,18 +103,15 @@ public class spoonacularSearchTest extends AbstractTest {
     protected void testGetRecipesComplexSearchGreekSalad() throws IOException, JSONException {
 
         String actual = given()
-                .param("apiKey", API_KEY)
+                .spec(BASE_SPEC)
                 .param("query", "Salad")
                 .param("cuisine", "Greek")
                 .param("number", 3)
-                .log()
-                .parameters()
                 .expect()
-                .statusCode(200)
-                .time(Matchers.lessThan(2000L))
-                .body("totalResults", is(362))
+                .spec(RESPONSE_SPEC)
                 .log()
                 .body()
+                .body("totalResults", is(362))
                 .when()
                 .get("recipes/complexSearch")
                 .body()
@@ -114,19 +132,16 @@ public class spoonacularSearchTest extends AbstractTest {
     protected void testGetRecipesComplexSearchNotFound() throws IOException, JSONException {
 
         String actual = given()
-                .param("apiKey", API_KEY)
+                .spec(BASE_SPEC)
                 .param("query", "Salad")
                 .param("cuisine", "Greek")
                 .param("number", 3)
                 .param("diet", "Paleo")
-                .log()
-                .parameters()
                 .expect()
-                .statusCode(200)
-                .time(Matchers.lessThan(2000L))
-                .body("totalResults", is(0))
+                .spec(RESPONSE_SPEC)
                 .log()
                 .body()
+                .body("totalResults", is(0))
                 .when()
                 .get("recipes/complexSearch")
                 .body()
