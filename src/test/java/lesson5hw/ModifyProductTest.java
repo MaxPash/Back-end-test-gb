@@ -6,6 +6,10 @@ import lesson5hw.dto.Product;
 import lesson5hw.utils.RetrofitUtils;
 import lombok.SneakyThrows;
 import okhttp3.ResponseBody;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import retrofit2.Response;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -25,7 +30,7 @@ public class ModifyProductTest {
     Faker faker = new Faker();
     String productName1 = faker.food().ingredient();
     String productName2 = faker.food().ingredient();
-    int id;
+    long id;
 
     @BeforeAll
     static void beforeAll() {
@@ -56,8 +61,16 @@ public class ModifyProductTest {
         Response<Product> response2 = productService.modifyProduct(product)
                 .execute();
         assertThat(response2.isSuccessful(), CoreMatchers.is(true));
+
+        String resource = "mybatis-config.xml";
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        SqlSession session = sqlSessionFactory.openSession();
+        db.dao.ProductsMapper productsMapper = session.getMapper(db.dao.ProductsMapper.class);
+        db.model.Products list = productsMapper.selectByPrimaryKey(id);
+
         assert response2.body() != null;
-        assertThat(response2.body().getTitle(), equalTo(productName2));
+        assertThat(response2.body().getTitle(), equalTo(list.getTitle()));
 
 
     }
@@ -65,7 +78,7 @@ public class ModifyProductTest {
     @SneakyThrows
     @AfterEach
     void tearDown() {
-        Response<ResponseBody> response = productService.deleteProduct(id).execute();
+        Response<ResponseBody> response = productService.deleteProduct((int) id).execute();
         assertThat(response.isSuccessful(), CoreMatchers.is(true));
     }
 }

@@ -15,7 +15,7 @@ import lombok.With;
 public class Product {
 
     @JsonProperty("id")
-    private Integer id;
+    private Long id;
     @JsonProperty("title")
     private String title;
     @JsonProperty("price")
